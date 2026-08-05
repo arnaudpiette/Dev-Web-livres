@@ -30,19 +30,6 @@ exports.createBook = async (req, res) => {
     }
 
     const bookObject = JSON.parse(req.body.book);
-    const firstRating = bookObject.ratings?.[0];
-    const grade = Number(firstRating?.grade);
-
-    if (
-      bookObject.ratings?.length !== 1
-      || firstRating.userId !== req.auth.userId
-      || !Number.isFinite(grade)
-      || grade < 0
-      || grade > 5
-    ) {
-      await deleteUploadedImage(req.file);
-      return res.status(400).json({ message: 'Note initiale invalide' });
-    }
 
     const book = new Book({
       title: bookObject.title,
@@ -50,11 +37,8 @@ exports.createBook = async (req, res) => {
       year: Number(bookObject.year),
       genre: bookObject.genre,
       userId: req.auth.userId,
-      ratings: [{
-        userId: req.auth.userId,
-        grade,
-      }],
-      averageRating: grade,
+      ratings: [],
+      averageRating: 0,
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
     });
 
@@ -63,7 +47,7 @@ exports.createBook = async (req, res) => {
     return res.status(201).json({ message: 'Livre créé' });
   } catch (error) {
     await deleteUploadedImage(req.file).catch(() => {});
-    return res.status(400).json({ error: error.message });
+    return res.status(400).json({ error });
   }
 };
 
@@ -115,7 +99,7 @@ exports.updateBook = async (req, res) => {
     if (!modificationSaved) {
       await deleteUploadedImage(req.file).catch(() => {});
     }
-    return res.status(400).json({ error: error.message });
+    return res.status(400).json({ error });
   }
 };
 
@@ -138,7 +122,7 @@ exports.deleteBook = async (req, res) => {
 
     return res.status(200).json({ message: 'Livre supprimé' });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error });
   }
 };
 
@@ -184,7 +168,7 @@ exports.rateBook = async (req, res) => {
 
     return res.status(200).json(book);
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error });
   }
 };
 
@@ -193,7 +177,7 @@ exports.getAllBooks = async (req, res) => {
     const books = await Book.find();
     return res.status(200).json(books);
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error });
   }
 };
 
@@ -207,7 +191,7 @@ exports.getOneBook = async (req, res) => {
 
     return res.status(200).json(book);
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error });
   }
 };
 
@@ -219,6 +203,6 @@ exports.getBestRatedBooks = async (req, res) => {
 
     return res.status(200).json(books);
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error });
   }
 };

@@ -16,7 +16,7 @@ function BookForm({ book, validate }) {
 
   const navigate = useNavigate();
   const {
-    register, watch, formState, handleSubmit, reset,
+    register, watch, handleSubmit, reset,
   } = useForm({
     defaultValues: useMemo(() => ({
       title: book?.title,
@@ -35,24 +35,11 @@ function BookForm({ book, validate }) {
     setRating(userRating);
   }, [userRating]);
 
-  useEffect(() => {
-    if (!book && formState.dirtyFields.rating) {
-      const rate = document.querySelector('input[name="rating"]:checked').value;
-      setRating(parseInt(rate, 10));
-      formState.dirtyFields.rating = false;
-    }
-  }, [formState]);
-
   const onSubmit = async (data) => {
     // When we create a new book
     if (!book) {
       if (!data.file[0]) {
         alert('Vous devez ajouter une image');
-      }
-      if (!data.rating) {
-        /* eslint-disable no-param-reassign */
-        data.rating = 0;
-        /* eslint-enable no-param-reassign */
       }
       const newBook = await addBook(data);
       if (!newBook.error) {
@@ -70,32 +57,33 @@ function BookForm({ book, validate }) {
     }
   };
 
-  const readOnlyStars = !!book;
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.Form}>
       <input type="hidden" id="id" {...register('id')} />
       <label htmlFor="title">
         <p>Titre du livre</p>
-        <input type="text" id="title" {...register('title')} />
+        <input type="text" id="title" {...register('title', { required: true })} />
       </label>
       <label htmlFor="author">
         <p>Auteur</p>
-        <input type="text" id="author" {...register('author')} />
+        <input type="text" id="author" {...register('author', { required: true })} />
       </label>
       <label htmlFor="year">
         <p>Année de publication</p>
-        <input type="text" id="year" {...register('year')} />
+        <input type="text" id="year" {...register('year', { required: true })} />
       </label>
       <label htmlFor="genre">
         <p>Genre</p>
-        <input type="text" id="genre" {...register('genre')} />
+        <input type="text" id="genre" {...register('genre', { required: true })} />
       </label>
-      <label htmlFor="rate">
-        <p>Note</p>
-        <div className={styles.Stars}>
-          {generateStarsInputs(rating, register, readOnlyStars)}
-        </div>
-      </label>
+      {book && (
+        <label htmlFor="rate">
+          <p>Note</p>
+          <div className={styles.Stars}>
+            {generateStarsInputs(rating, register, true)}
+          </div>
+        </label>
+      )}
       <label htmlFor="file">
         <p>Visuel</p>
         <div className={styles.AddImage}>
@@ -112,7 +100,11 @@ function BookForm({ book, validate }) {
           )}
 
         </div>
-        <input {...register('file')} type="file" id="file" />
+        <input
+          {...register('file', { required: !book })}
+          type="file"
+          id="file"
+        />
       </label>
       <button type="submit">Publier</button>
     </form>

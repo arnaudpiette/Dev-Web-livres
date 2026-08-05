@@ -13,7 +13,7 @@ exports.signup = async (req, res) => {
 
     res.status(201).json({ message: 'Utilisateur créé !' });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error });
   }
 };
 
@@ -42,6 +42,6 @@ exports.login = async (req, res) => {
       token,
     });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error });
   }
 };
