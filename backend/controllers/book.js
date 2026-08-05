@@ -67,7 +67,7 @@ exports.createBook = async (req, res) => {
   }
 };
 
-exports.modifyBook = async (req, res) => {
+exports.updateBook = async (req, res) => {
   let modificationSaved = false;
 
   try {

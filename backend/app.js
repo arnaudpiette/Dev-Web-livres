@@ -1,5 +1,7 @@
 const express = require('express');
+const path = require('path');
 const userRoutes = require('./routes/user');
+const bookRoutes = require('./routes/book');
 
 const app = express();
 
@@ -19,37 +21,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/auth', userRoutes);
-
-app.post('/api/books', (req, res) => {
-  console.log(req.body);
-  res.status(201).json({ message: 'Livre créé !' });
-});
-
-app.get('/api/books', (req, res) => {
-  res.status(200).json([
-    {
-      _id: '1',
-      userId: '1',
-      title: 'Milwaukee Mission',
-      author: 'Elder Cooper',
-      imageUrl: 'https://via.placeholder.com/206x260',
-      year: 2021,
-      genre: 'Policier',
-      ratings: [{ userId: '1', grade: 5 }],
-      averageRating: 5,
-    },
-    {
-      _id: '2',
-      userId: '2',
-      title: 'Book for Esther',
-      author: 'Alabaster',
-      imageUrl: 'https://via.placeholder.com/206x260',
-      year: 2022,
-      genre: 'Roman',
-      ratings: [{ userId: '2', grade: 4 }],
-      averageRating: 4,
-    },
-  ]);
-});
+app.use('/api/books', bookRoutes);
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 module.exports = app;
