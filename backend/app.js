@@ -1,4 +1,5 @@
 const express = require('express');
+const userRoutes = require('./routes/user');
 
 const app = express();
 
@@ -16,6 +17,8 @@ app.use((req, res, next) => {
   );
   next();
 });
+
+app.use('/api/auth', userRoutes);
 
 app.post('/api/books', (req, res) => {
   console.log(req.body);
