@@ -1,5 +1,8 @@
+require('dotenv').config();
+
 const http = require('http');
 const app = require('./app');
+const connectDatabase = require('./config/db');
 
 const normalizePort = (value) => {
   const port = parseInt(value, 10);
@@ -45,4 +48,13 @@ server.on('listening', () => {
   console.log(`Listening on ${bind}`);
 });
 
-server.listen(port);
+connectDatabase()
+  .then(() => {
+    server.listen(port, () => {
+      console.log(`Serveur disponible sur http://localhost:${port}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Connexion MongoDB impossible :', error);
+    process.exit(1);
+  });
