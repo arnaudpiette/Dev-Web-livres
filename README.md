@@ -1,24 +1,56 @@
 # Mon vieux Grimoire
 
+Projet web organisé en architecture `frontend/` et `backend/`.
 
-## Comment lancer le projet ? 
+## Structure du projet
 
-### Avec npm
+- `frontend/`: application React créée avec Create React App.
+- `backend/`: API Express / MongoDB.
 
-Faites la commande `npm install` pour installer les dépendances puis `npm start` pour lancer le projet. 
+## Prérequis
 
-Le projet a été testé sur node 19.
+- Node.js (version 18+ recommandée)
+- npm
+- MongoDB (local ou Atlas)
 
-### Lancer le back-end
+## Installation
 
-Dans un second terminal :
+### Installer le backend
 
 ```bash
 cd backend
 npm install
+```
+
+### Installer le frontend
+
+```bash
+cd frontend
+npm install
+```
+
+## Lancer le projet
+
+### Démarrer le backend
+
+```bash
+cd backend
 npm run dev
 ```
 
-L'API Express est alors disponible sur `http://localhost:4000`. La route
-`GET /api/books` renvoie les premiers livres de démonstration et la route
-`POST /api/books` reçoit un livre au format JSON.
+Le serveur écoute normalement sur `http://localhost:4000`.
+
+### Démarrer le frontend
+
+```bash
+cd frontend
+npm start
+```
+
+L'application React s'ouvre en général sur `http://localhost:3000`.
+
+## Notes
+
+- Le dossier `frontend/build` est ignoré par Git.
+- Le dossier `frontend/node_modules` est ignoré par Git.
+- Si vous utilisez VS Code, ouvrez la racine du dépôt et lancez les deux serveurs dans des terminaux séparés.
