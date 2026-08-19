@@ -8,6 +8,7 @@ import { useFilePreview } from '../../../lib/customHooks';
 import addFileIMG from '../../../images/add_file.png';
 import styles from './BookForm.module.css';
 import { updateBook, addBook } from '../../../lib/common';
+import { APP_ROUTES } from '../../../utils/constants';
 
 function BookForm({ book, validate }) {
   const userRating = book ? book.ratings.find((elt) => elt.userId === localStorage.getItem('userId'))?.grade : 0;
@@ -38,12 +39,26 @@ function BookForm({ book, validate }) {
   const onSubmit = async (data) => {
     // When we create a new book
     if (!book) {
-      if (!data.file[0]) {
+      const selectedFile = data.file?.[0];
+
+      if (!selectedFile) {
         alert('Vous devez ajouter une image');
+        return;
+      }
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(selectedFile.type)) {
+        alert('Format non autorisé. Utilisez une image JPEG, PNG ou WebP.');
+        return;
+      }
+      if (selectedFile.size > 5 * 1024 * 1024) {
+        alert('L\'image est trop volumineuse. La taille maximale est de 5 Mo.');
+        return;
       }
       const newBook = await addBook(data);
       if (!newBook.error) {
         validate(true);
+      } else if (newBook.status === 401) {
+        alert('Votre session a expiré. Veuillez vous reconnecter.');
+        navigate(APP_ROUTES.SIGN_IN);
       } else {
         alert(newBook.message);
       }
@@ -104,6 +119,7 @@ function BookForm({ book, validate }) {
           {...register('file', { required: !book })}
           type="file"
           id="file"
+          accept="image/jpeg,image/png,image/webp"
         />
       </label>
       <button type="submit">Publier</button>

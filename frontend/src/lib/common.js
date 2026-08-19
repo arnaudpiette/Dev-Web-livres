@@ -135,7 +135,13 @@ export async function addBook(data) {
     });
   } catch (err) {
     console.error(err);
-    return { error: true, message: err.message };
+    return {
+      error: true,
+      message: err.response?.data?.message
+        || err.response?.data?.error?.message
+        || err.message,
+      status: err.response?.status,
+    };
   }
 }
 
